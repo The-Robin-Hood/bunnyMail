@@ -1,0 +1,4 @@
+*.go linguist-language=Go
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript
+*.py linguist-detectable=false
