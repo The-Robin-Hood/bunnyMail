@@ -136,7 +136,20 @@ func (c *Client) parseMessage(msg *imap.Message, folder string) (*model.Message,
 	}
 
 	// debug print expect html instead size of html
-	logger.Debug(fmt.Sprintf(" Parsed message UID=%d\n Subject=%q\n From=%q\n To=%q\n HasAttachments=%v\n CC=%q\n ReceivedAt=%v\n Folder=%q\n MessageID=%q\n IssRead=%v\n IsStarred=%v\n",
+	logger.Debug(fmt.Sprintf(
+		"\nParsed message UID=%d\n"+
+			"Subject=%q\n"+
+			"From=%q\n"+
+			"To=%q\n"+
+			"HasAttachments=%v\n"+
+			"CC=%q\n"+
+			"ReceivedAt=%v\n"+
+			"Folder=%q\n"+
+			"MessageID=%q\n"+
+			"IsRead=%v\n"+
+			"IsStarred=%v\n"+
+			"BodyText size=%.30q\n"+
+			"BodyHTML size=%.30q\n",
 		message.UID,
 		message.Subject,
 		message.FromAddress,
@@ -148,9 +161,9 @@ func (c *Client) parseMessage(msg *imap.Message, folder string) (*model.Message,
 		message.MessageID,
 		message.IsRead,
 		message.IsStarred,
+		message.BodyText,
+		message.BodyHTML,
 	))
-	logger.Debug(fmt.Sprintf(" BodyText: %.30q\n", message.BodyText))
-	logger.Debug(fmt.Sprintf(" BodyHTML: %.30q\n", message.BodyHTML))
 
 	return message, nil
 }
