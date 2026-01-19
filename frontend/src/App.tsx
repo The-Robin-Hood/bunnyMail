@@ -7,9 +7,11 @@ import { RadixLoader } from "./components/ui/loader";
 import { useMailStore } from "./store/mailStore";
 
 export default function App() {
-  // const syncAccount = useMailStore((state) => state.syncAccount);
+  const selectedAccount = useMailStore((state) => state.selectedAccount);
   const storedAccounts = useMailStore((state) => state.accounts);
+  const syncAccount = useMailStore((state) => state.syncAccount);
   const loadAccounts = useMailStore((state) => state.loadAccounts);
+
   const [loading, setLoading] = useState<boolean>(true);
 
   async function sleep(ms: number) {
@@ -20,10 +22,11 @@ export default function App() {
     const load = async () => {
       await sleep(500);
       await loadAccounts();
+      await syncAccount(selectedAccount?.id || 1);
       setLoading(false);
     };
     load();
-  }, [loadAccounts]);
+  }, []);
 
   return (
     <ThemeProvider defaultTheme="dark">

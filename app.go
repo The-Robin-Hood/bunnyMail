@@ -31,21 +31,15 @@ func (a *App) startup(ctx context.Context) {
 	a.appCore = appCore
 }
 
-func (a *App) G_TestConnection(accountID int64) error {
+func (a *App) G_TestConnectionWithPasswd(host string, port int, username, password string) error {
 	if a.appCore == nil {
 		return fmt.Errorf("app not initialized")
 	}
-
-	account, err := a.appCore.AccountStore.GetByID(accountID)
-	if err != nil {
-		return err
-	}
-
 	return imap.TestConnection(
-		account.IMAPHost,
-		account.IMAPPort,
-		account.Email,
-		account.Password,
+		host,
+		port,
+		username,
+		password,
 	)
 }
 
@@ -93,7 +87,7 @@ func (a *App) G_SyncAccount(accountID int64, limit int) (int, error) {
 		account.IMAPHost,
 		account.IMAPPort,
 		account.IMAPUsername,
-		account.IMAPPassword,
+		account.Password,
 		imap.IMAPSecurity(account.IMAPSecurity),
 	)
 	if err != nil {
@@ -134,6 +128,23 @@ func (a *App) G_GetMessagesByAccount(accountID int64, limit int) ([]model.Messag
 	}
 
 	return result, nil
+}
+
+func (a *App) G_DeleteAccount(accountID int64) error {
+	if a.appCore == nil {
+		return fmt.Errorf("app not initialized")
+	}
+
+	logger.Info("Deleting account", "account_id", accountID)
+
+	err := a.appCore.AccountStore.Delete(accountID)
+	if err != nil {
+		logger.Error("Failed to delete account", "account_id", accountID, "error", err)
+		return err
+	}
+
+	logger.Info("Account deleted successfully", "account_id", accountID)
+	return nil
 }
 
 // GetMessage returns a specific message

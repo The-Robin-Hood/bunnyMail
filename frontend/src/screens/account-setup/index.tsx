@@ -13,7 +13,8 @@ import AccountSetupStep1 from "./step1";
 import AccountSetupStep2 from "./step2";
 import AccountSetupStep3 from "./step3";
 
-import {G_AddAccount} from "@/../wailsjs/go/main/App" 
+import { G_AddAccount, G_TestConnectionWithPasswd } from "@wailsjs/go/main/App";
+import { toast } from "sonner";
 
 const initialFormData = {
   fullName: "",
@@ -73,33 +74,42 @@ export default function AccountSetup() {
     }
   };
 
-  const handleSubmit = () => {
-    console.log("Account setup complete:", formData);
-    alert("Account setup complete! Check console for data.");
-    G_AddAccount({
-      id: 0, // Will be set by backend
-      email: formData.email,
-      name: formData.fullName,
-      password: formData.password,
-      remember_password: formData.rememberPassword === "true",
-
-      imap_username: formData.email,
-      imap_password: formData.password,
-      imap_host: formData.imapServer,
-      imap_port: parseInt(formData.imapPort, 10),
-      imap_security: formData.imapSecurity,
-      imap_auth_type: formData.imapAuth,
+  const handleSubmit = async () => {
+    try {
+      toast.loading("Testing connection...");
+      await G_TestConnectionWithPasswd(
+        formData.imapServer,
+        parseInt(formData.imapPort, 10),
+        formData.email,
+        formData.password,
+      );
       
-      smtp_username: formData.email,
-      smtp_password: formData.password,
-      smtp_host: formData.smtpServer,
-      smtp_port: parseInt(formData.smtpPort, 10),
-      smtp_security: formData.smtpSecurity,
-      smtp_auth_type: formData.smtpAuth,
-      created_at: new Date().toISOString(), // Placeholder,
-    }).then(() => {
-      console.log("Account added successfully");
-    });
+      await G_AddAccount({
+        id: 0,
+        email: formData.email,
+        name: formData.fullName,
+        password: formData.password,
+        remember_password: formData.rememberPassword === "true",
+        imap_username: formData.email,
+        imap_password: formData.password,
+        imap_host: formData.imapServer,
+        imap_port: parseInt(formData.imapPort, 10),
+        imap_security: formData.imapSecurity,
+        imap_auth_type: formData.imapAuth,
+        smtp_username: formData.email,
+        smtp_password: formData.password,
+        smtp_host: formData.smtpServer,
+        smtp_port: parseInt(formData.smtpPort, 10),
+        smtp_security: formData.smtpSecurity,
+        smtp_auth_type: formData.smtpAuth,
+        created_at: new Date().toISOString(),
+      });
+      
+      toast.success("Account added successfully!");
+      window.location.reload();
+    } catch (err) {
+      toast.error(`Connection failed: ${err instanceof Error ? err.message : "Unknown error"}`);
+    }
   };
 
   return (

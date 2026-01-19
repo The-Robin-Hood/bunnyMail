@@ -141,8 +141,9 @@ export default function AccountSetupStep2({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="STARTTLS">STARTTLS</SelectItem>
-                    <SelectItem value="SSL/TLS">SSL/TLS</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="start_tls">STARTTLS</SelectItem>
+                    <SelectItem value="ssl_tls">SSL/TLS</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>

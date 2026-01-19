@@ -18,8 +18,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
-import { G_GetMessagesByAccount } from "@/../wailsjs/go/main/App";
-import type { model } from "@/../wailsjs/go/models";
 import { useMailStore } from "@/store/mailStore";
 import { cn, convertTime, truncateText } from "@/lib/utils";
 
@@ -52,22 +50,10 @@ const folders = [
 
 export function AppSidebar() {
   const [activeItem, setActiveItem] = React.useState(folders[0]);
-  const [mails, setMails] = React.useState<model.Message[]>([]);
+  const mails = useMailStore((state) => state.messages); 
   const setSelectedMail = useMailStore((state) => state.selectMessage);
   const selectedMail = useMailStore((state) => state.selectedMessage);
-  const selectedAccount = useMailStore((state) => state.selectedAccount);
 
-  React.useEffect(() => {
-    if (!selectedAccount) return;
-    G_GetMessagesByAccount(selectedAccount.id, 20)
-      .then((messages) => {
-        console.log("Fetched messages in sidebar:", messages);
-        setMails(messages);
-      })
-      .catch((err) => {
-        console.error("Fetching messages failed in sidebar:", err);
-      });
-  }, [selectedAccount]);
 
   return (
     <>

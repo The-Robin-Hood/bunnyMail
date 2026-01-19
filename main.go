@@ -43,11 +43,18 @@ func main() {
 	err = wails.Run(&options.App{
 		Title: "Bunny Mail",
 
+		Width:  1200,
+		Height: 800,
+
 		MinWidth:  1200,
 		MinHeight: 800,
 
-		Width:  1200,
-		Height: 800,
+		SingleInstanceLock: &options.SingleInstanceLock{
+			UniqueId: "bunnymail-unique-instance-id",
+			OnSecondInstanceLaunch: func(secondInstanceData options.SecondInstanceData) {
+				logger.Info("Second instance launch detected, focusing existing window")
+			},
+		},
 
 		AssetServer: &assetserver.Options{
 			Assets: assets,

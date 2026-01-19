@@ -6,6 +6,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Check, ChevronLeft } from "lucide-react";
+import { useState } from "react";
 
 export default function AccountSetupStep3({
   formData,
@@ -27,9 +28,16 @@ export default function AccountSetupStep3({
     smtpAuth: string;
   };
   handleBack: () => void;
-  handleSubmit: () => void;
+  handleSubmit: () => Promise<void>;
 }) {
-  console.log("Reviewing form data:", formData);
+  const [submitting, setSubmitting] = useState(false);
+
+  const onSubmit = async () => {
+    setSubmitting(true);
+    await handleSubmit();
+    setSubmitting(false);
+  };
+
   return (
     <div>
       <div className="space-y-4">
@@ -41,7 +49,7 @@ export default function AccountSetupStep3({
             <span className="text-accent-foreground">Full Name:</span>
             <span className="font-medium">{formData.fullName || "—"}</span>
             <span className="text-accent-foreground">Email:</span>
-            <span className="font-medium">{formData.email || "—"}</span>
+            <span className="font-medium truncate">{formData.email || "—"}</span>
             <span className="text-accent-foreground">Remember Password:</span>
             <span className="font-medium">
               {formData.rememberPassword ? "Yes" : "No"}
@@ -87,12 +95,14 @@ export default function AccountSetupStep3({
           variant="outline"
           onClick={handleBack}
           className="flex-1 text-white"
+          disabled={submitting}
         >
           <ChevronLeft className="mr-2 w-4 h-4" />
           <span>Back</span>
         </Button>
         <Button
-          onClick={handleSubmit}
+          disabled={submitting}
+          onClick={onSubmit}
           className="flex-1 bg-green-600 hover:bg-green-700 text-white"
         >
           <Check className="mr-2 w-4 h-4" />
